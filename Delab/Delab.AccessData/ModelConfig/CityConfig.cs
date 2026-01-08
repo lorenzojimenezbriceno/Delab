@@ -9,6 +9,8 @@ public class CityConfig : IEntityTypeConfiguration<City>
     public void Configure(EntityTypeBuilder<City> builder)
     {
         builder.HasKey(e => e.CityId);
+
+        // No permite nombres iguales de ciudades de estados distintos
         builder.HasIndex(e => new { e.Name, e.StateId }).IsUnique();
 
         // Proteccion de borrado en cascada

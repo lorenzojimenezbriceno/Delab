@@ -9,6 +9,8 @@ public class CountryConfig : IEntityTypeConfiguration<Country>
     public void Configure(EntityTypeBuilder<Country> builder)
     {
         builder.HasKey(e => e.CountryId);
+
+        // No permite nombres iguales de paises
         builder.HasIndex(e => e.Name).IsUnique();
     }
 }
