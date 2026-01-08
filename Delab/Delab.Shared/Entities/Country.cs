@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Delab.Shared.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace Daleb.Shared.Entities;
 
@@ -20,7 +21,8 @@ public class Country
     public int NumStates => States?.Count ?? 0;
 
     // Relaciones entre entidades
+
     public ICollection<State>? States { get; set; }
 
-    //public ICollection<Corporation>? Corporations { get; set; }
+    public ICollection<Corporation>? Corporations { get; set; }
 }

@@ -67,12 +67,15 @@ public class Corporation
     [NotMapped]
     public string? ImgBase64 { get; set; }
 
-    //relaciones
+    // Relaciones entre entidades
+
+    public SoftPlan? SoftPlan { get; set; }
+
     public Country? Country { get; set; }
 
-    //public SoftPlan? SoftPlan { get; set; }
+    public ICollection<Manager>? Managers { get; set; }
+    
+    public ICollection<User>? Usuarios { get; set; }
 
-    //public ICollection<Manager>? Managers { get; set; }
-    //public ICollection<Usuario>? Usuarios { get; set; }
-    //public ICollection<UsuarioRole>? UsuarioRoles { get; set; }
+    public ICollection<UserRoleDetails>? UserRoleDetails { get; set; }
 }
