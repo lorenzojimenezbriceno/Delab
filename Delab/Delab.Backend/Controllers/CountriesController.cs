@@ -19,15 +19,16 @@ public class CountriesController : ControllerBase
     }
 
     // GET: api/countries
-    [HttpGet("/pagina")]
+    [HttpGet]
     public async Task<ActionResult<IEnumerable<Country>>> GetCountries([FromQuery] PaginationDTO pagination)
     {
         var queryable = _context.Countries.AsQueryable();
+        // Inserta los dos encabezados en el response
         await HttpContext.InsertParameterPagination(queryable, pagination.RecordsNumber);
         return await queryable.OrderBy(x => x.Name).Paginate(pagination).ToListAsync();
     }
 
-    [HttpGet]
+    [HttpGet("/todos")]
     public async Task<ActionResult<IEnumerable<Country>>> GetCountries()
     {
         return await _context.Countries.OrderBy(x => x.Name).ToListAsync();
@@ -56,14 +57,14 @@ public class CountriesController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> PutCountry(Country country)
     {
-        if (country.CountryId <= 0 || String.IsNullOrEmpty(country.Name) || country.Name.Trim() == String.Empty)
+        if (country.Id <= 0 || String.IsNullOrEmpty(country.Name) || country.Name.Trim() == String.Empty)
         {
             return BadRequest("Id invalido");
         }
 
         country.Name = country.Name.Trim();
 
-        if (CountryExists(country.Name, country.CountryId))
+        if (CountryExists(country.Name, country.Id))
         {
             return BadRequest("Ya existe un registro con el mismo nombre.");
         }
@@ -150,7 +151,7 @@ public class CountriesController : ControllerBase
         _context.Countries.Add(country);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction("GetCountry", new { id = country.CountryId }, country);
+        return CreatedAtAction("GetCountry", new { id = country.Id }, country);
     }
 
     // DELETE: api/countries/5
@@ -197,6 +198,6 @@ public class CountriesController : ControllerBase
     private bool CountryExists(string name, int countryId)
     {
         return _context.Countries
-            .Any(e => e.Name.ToLower() == name.Trim().ToLower() && e.CountryId != countryId);
+            .Any(e => e.Name.ToLower() == name.Trim().ToLower() && e.Id != countryId);
     }
 }

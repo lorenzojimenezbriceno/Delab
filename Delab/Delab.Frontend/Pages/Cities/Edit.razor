@@ -1,0 +1,15 @@
+﻿@page "/cities/edit/{StateId:int}"
+
+<h3>Editar Estado</h3>
+
+@if (City == null)
+{
+    <Loading />
+}
+else
+{
+    <Form @ref=Form
+          City="City"
+          OnSubmit="_Update"
+          ReturnAction="ReturnAction" />
+}

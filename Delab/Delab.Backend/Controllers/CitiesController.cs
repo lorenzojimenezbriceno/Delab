@@ -24,6 +24,7 @@ public class CitiesController : ControllerBase
     {
         var queryable = _context.Cities.Where(x => x.StateId == pagination.Id).Include(x => x.State).AsQueryable();
 
+        // Inserta los dos encabezados en el response
         await HttpContext.InsertParameterPagination(queryable, pagination.RecordsNumber);
 
         return await queryable.OrderBy(x => x.Name).Paginate(pagination).ToListAsync();
@@ -49,7 +50,7 @@ public class CitiesController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> PutCity(City city)
     {
-        if (city.StateId <= 0 || city.CityId <= 0 || String.IsNullOrEmpty(city.Name) || city.Name.Trim() == String.Empty)
+        if (city.StateId <= 0 || city.Id <= 0 || String.IsNullOrEmpty(city.Name) || city.Name.Trim() == String.Empty)
         {
             return BadRequest("Ids de estado y pais invalidos");
         }
@@ -148,7 +149,7 @@ public class CitiesController : ControllerBase
             return BadRequest(exception.Message);
         }
 
-        return CreatedAtAction("GetCity", new { id = city.CityId }, city);
+        return CreatedAtAction("GetCity", new { id = city.Id }, city);
     }
 
     // DELETE: api/Cities/5

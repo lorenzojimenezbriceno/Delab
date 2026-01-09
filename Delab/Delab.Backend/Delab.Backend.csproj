@@ -29,4 +29,8 @@
     <ProjectReference Include="..\Delab.AccessData\Delab.AccessData.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\Images\" />
+  </ItemGroup>
+
 </Project>

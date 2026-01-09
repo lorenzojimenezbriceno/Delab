@@ -1,0 +1,9 @@
+@page "/states/create/{CountryId:int}"
+
+<h3>Crear Estado</h3>
+
+<Form @ref=Form
+    State="State"
+    OnSubmit="_Create"
+    ReturnAction="ReturnAction"
+/>

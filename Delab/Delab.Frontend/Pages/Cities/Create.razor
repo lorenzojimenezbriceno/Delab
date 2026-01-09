@@ -1,0 +1,9 @@
+@page "/cities/create/{StateId:int}"
+
+<h3>Crear Ciudad</h3>
+
+<Form @ref=Form
+    City="City"
+    OnSubmit="_Create"
+    ReturnAction="ReturnAction"
+/>

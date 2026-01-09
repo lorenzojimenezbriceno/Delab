@@ -25,7 +25,7 @@ public class User : IdentityUser
     [Display(Name = "Puesto Trabajo")]
     public string JobPosition { get; set; } = null!;
 
-    //Identificacion de Origenes y Role del Usuario
+    // Identificacion de Origenes y Role del Usuario
     
     [Display(Name = "Origen")]
     public string? UserFrom { get; set; }

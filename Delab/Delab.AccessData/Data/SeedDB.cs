@@ -1,4 +1,6 @@
 ﻿using Daleb.Shared.Entities;
+using Delab.Shared.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Delab.AccessData.Data;
 
@@ -18,7 +20,50 @@ public class SeedDB
 
         // Inserta los países, estados y ciudades
         await CheckCountriesAsync();
+
+        // Inserta los planes
+        await CheckSoftPlan();
     }
+
+    /*
+     * Alimenta la base de datos con los planes disponibles
+     */
+
+    private async Task CheckSoftPlan()
+    {
+        if (!context.SoftPlans.Any())
+        {
+            context.SoftPlans.Add(new SoftPlan
+            {
+                Name = "Plan 1 Mes",
+                Price = 50,
+                Meses = 1,
+                ClinicsCount = 2,
+                Active = true
+            });
+            context.SoftPlans.Add(new SoftPlan
+            {
+                Name = "Plan 6 Mes",
+                Price = 300,
+                Meses = 6,
+                ClinicsCount = 10,
+                Active = true
+            });
+            context.SoftPlans.Add(new SoftPlan
+            {
+                Name = "Plan 12 Mes",
+                Price = 600,
+                Meses = 12,
+                ClinicsCount = 100,
+                Active = true
+            });
+            await context.SaveChangesAsync();
+        }
+    }
+
+    /*
+     * Inserta los países, estados y ciudades
+     */
 
     private async Task CheckCountriesAsync()
     {
@@ -56,7 +101,7 @@ public class SeedDB
                         Name = "Cundinamarca",
                         Cities = new List<City>()
                         {
-                            new City{ Name = "Soacha"},
+                            new City { Name = "Soacha"},
                             new City { Name = "Facatativa"},
                             new City { Name = "Fusagasuga"},
                             new City { Name = "Chia"},

@@ -20,12 +20,12 @@ public class StatesController : ControllerBase
 
     // GET: api/States
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<State>>> GetCountries([FromQuery] PaginationDTO pagination)
+    public async Task<ActionResult<IEnumerable<State>>> GetState([FromQuery] PaginationDTO pagination)
     {
         var queryable = _context.States.Where(x => x.CountryId == pagination.Id).Include(x => x.Cities).AsQueryable();
 
+        // Inserta los dos encabezados en el response
         await HttpContext.InsertParameterPagination(queryable, pagination.RecordsNumber);
-
         return await queryable.OrderBy(x => x.Name).Paginate(pagination).ToListAsync();
     }
 
@@ -49,14 +49,14 @@ public class StatesController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> PutState(State state)
     {
-        if (state.StateId <= 0 || state.CountryId <= 0 || String.IsNullOrEmpty(state.Name) || state.Name.Trim() == String.Empty)
+        if (state.Id <= 0 || state.CountryId <= 0 || String.IsNullOrEmpty(state.Name) || state.Name.Trim() == String.Empty)
         {
             return BadRequest("Ids de estado y pais invalidos");
         }
 
         state.Name = state.Name.Trim();
 
-        if (StateExists(state.Name, state.StateId, state.CountryId))
+        if (StateExists(state.Name, state.Id, state.Id))
         {
             return BadRequest("Ya existe un registro con el mismo nombre.");
         }
@@ -69,7 +69,7 @@ public class StatesController : ControllerBase
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!StateExists(state.Name, state.CountryId))
+            if (!StateExists(state.Name, state.Id))
             {
                 return NotFound();
             }
@@ -88,14 +88,14 @@ public class StatesController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<State>> PostState(State state)
     {
-        if (state.CountryId <= 0 || String.IsNullOrEmpty(state.Name) || state.Name.Trim() == String.Empty)
+        if (state.Id <= 0 || String.IsNullOrEmpty(state.Name) || state.Name.Trim() == String.Empty)
         {
             return BadRequest("Ids de estado y pais invalidos");
         }
 
         state.Name = state.Name.Trim();
 
-        if (StateExists(state.Name, state.CountryId))
+        if (StateExists(state.Name, state.Id))
         {
             return BadRequest("Ya existe un registro con el mismo nombre.");
         }
@@ -108,7 +108,7 @@ public class StatesController : ControllerBase
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!StateExists(state.Name, state.CountryId))
+            if (!StateExists(state.Name, state.Id))
             {
                 return NotFound();
             }
@@ -133,7 +133,7 @@ public class StatesController : ControllerBase
             return BadRequest(exception.Message);
         }
 
-        return CreatedAtAction("GetState", new { id = state.StateId }, state);
+        return CreatedAtAction("GetState", new { id = state.Id }, state);
     }
 
     // DELETE: api/States/5
@@ -173,13 +173,13 @@ public class StatesController : ControllerBase
     private bool StateExists(string name, int countryId)
     {
         return _context.States
-            .Any(e => e.CountryId == countryId && e.Name.Trim().ToLower() == name.Trim().ToLower());
+            .Any(e => e.Id == countryId && e.Name.Trim().ToLower() == name.Trim().ToLower());
     }
 
     // Los estados tienen que tener un nombre distinto, comprobacion cuando se renombra un estado.
     private bool StateExists(string name, int stateId, int countryId)
     {
         return _context.States
-            .Any(e => e.Name.ToLower() == name.Trim().ToLower() && e.StateId != stateId && e.CountryId == countryId);
+            .Any(e => e.Name.ToLower() == name.Trim().ToLower() && e.Id != stateId && e.Id == countryId);
     }
 }

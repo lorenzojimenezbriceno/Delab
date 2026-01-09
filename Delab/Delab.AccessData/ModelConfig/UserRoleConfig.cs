@@ -10,7 +10,8 @@ public class UserRoleConfig : IEntityTypeConfiguration<UserRoleDetails>
     {
         builder.HasIndex(e => e.UserRoleDetailsId);
         builder.HasIndex(e => new { e.UserType, e.UserId }).IsUnique();
-        //Proteccion de Borrado en Cascada
+
+        // Proteccion de Borrado en Cascada
         builder.HasOne(e => e.User).WithMany(e => e.UserRoleDetails).OnDelete(DeleteBehavior.Restrict);
     }
 }

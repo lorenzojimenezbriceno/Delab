@@ -5,7 +5,7 @@ namespace Daleb.Shared.Entities;
 public class State
 {
     [Key]
-    public int StateId { get; set; }
+    public int Id { get; set; }
 
     public int CountryId { get; set; }
 
@@ -15,7 +15,7 @@ public class State
     public string Name { get; set; } = null!;
 
     // Expression-bodied property
-    public int NumCity => Cities == null ? 0 : Cities.Count();
+    public int CitiesNumber => Cities == null ? 0 : Cities.Count();
 
     // Relaciones entre entidades
     public Country? Country { get; set; }

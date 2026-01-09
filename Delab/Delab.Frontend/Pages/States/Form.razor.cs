@@ -1,0 +1,63 @@
+using CurrieTechnologies.Razor.SweetAlert2;
+using Daleb.Shared.Entities;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components.Routing;
+
+namespace Delab.Frontend.Pages.States;
+
+public partial class Form
+{
+    [Inject] private SweetAlertService _sweetAlert { get; set; } = null!;
+
+    private EditContext _editContext = null!;
+
+    public bool FormPostedSuccessfully { get; set; } = false;
+
+    [Parameter, EditorRequired]
+    public State State { get; set; } = null!;
+
+    [Parameter, EditorRequired]
+    public EventCallback OnSubmit { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback ReturnAction { get; set; }
+
+    protected override void OnInitialized()
+    {
+        _editContext = new(State);
+    }
+
+    // Para evitar salirse de la forma durante la edicion
+    private async Task OnBeforeInternalNavigation(LocationChangingContext context)
+    {
+        var formWasEdited = _editContext.IsModified();
+
+        if (!formWasEdited)
+        {
+            return;
+        }
+
+        if (FormPostedSuccessfully)
+        {
+            return;
+        }
+
+        var result = await _sweetAlert.FireAsync(new SweetAlertOptions
+        {
+            Title = "Confirmación",
+            Text = "¿Deseas abandonar la página y perder los cambios?",
+            Icon = SweetAlertIcon.Warning,
+            ShowCancelButton = true
+        });
+
+        var confirm = !string.IsNullOrEmpty(result.Value);
+
+        if (confirm)
+        {
+            return;
+        }
+
+        context.PreventNavigation();
+    }
+}

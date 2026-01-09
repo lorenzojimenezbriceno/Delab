@@ -8,7 +8,7 @@ public class StateConfig : IEntityTypeConfiguration<State>
 {
     public void Configure(EntityTypeBuilder<State> builder)
     {
-        builder.HasKey(e => e.CountryId);
+        builder.HasKey(e => e.Id);
         
         // No permite nombres iguales de estados con paises distintos
         builder.HasIndex(e => new { e.Name, e.CountryId }).IsUnique();

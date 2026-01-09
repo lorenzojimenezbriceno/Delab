@@ -1,0 +1,46 @@
+﻿@page "/states/details/{Id:int}"
+
+@if (Cities is null)
+{
+    <Loading />
+}
+else
+{
+    <h3>@State!.Name</h3>
+
+    <div class="mb-3">
+        <a class="btn btn-primary" href="/cities/create/@State.Id">Nueva Ciudad</a>
+        <a class="btn btn-success" href="/countries/details/@State.Id">Regresar</a>
+    </div>
+
+    <GenericList MyList="Cities">
+        <Body>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Estado / Departamento</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Cities!)
+                    {
+                        <tr>
+                            <td>
+                                @item.Name
+                            </td>
+                            <td>
+                                <a class="btn btn-warning" href="/cities/edit/@item.Id">Editar</a>
+                                <button class="btn btn-danger" @onclick="@(() => Borrar(item.Id))">Borrar</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </Body>
+    </GenericList>
+
+    <Pagination CurrentPage="CurrentPage"
+                SelectedPage="SelectedPage"
+                TotalPages="TotalPages" />
+}

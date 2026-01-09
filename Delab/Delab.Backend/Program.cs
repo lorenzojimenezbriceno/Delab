@@ -3,12 +3,16 @@ using Delab.Shared.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
+
+const string backUrl = "https://localhost:7165";
+const string frontUrl = "https://localhost:7056";
 
 /*
  * Add services to the container y,
@@ -121,9 +125,11 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowSpecificOrigin", builder =>
     {
         builder
-            .WithOrigins("https://localhost:7098") // Dominio de la aplicacion Blazor
+            // Agregar el dominio de la aplicacion Blazor
+            .WithOrigins($"{frontUrl}") 
             .AllowAnyHeader()
             .AllowAnyMethod()
+            // Agregar dos headers personalizados para la paginacion
             .WithExposedHeaders(new string[] { "Totalpages", "Counting" });
     });
 });
@@ -134,6 +140,25 @@ builder.Services.AddCors(options =>
  */
 
 var app = builder.Build();
+
+/*
+ * Llamar el Servicio de CORS
+ */
+
+app.UseCors("AllowSpecificOrigin");
+
+/*
+ * Configuración para servir archivos estáticos desde la carpeta Images, directorio dentro de wwwroot
+ */
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider
+    (
+        Path.Combine(builder.Environment.WebRootPath, "Images")
+    ),
+    RequestPath = "/Images"
+});
 
 /*
  * Método para cargar los datos de prueba a la base de datos si está vacía
@@ -150,7 +175,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI();
-    OpenBrowser("https://localhost:7165/swagger"); // URL de Swagger
+    OpenBrowser($"{backUrl}/swagger"); // URL de Swagger
 }
 
 /*
