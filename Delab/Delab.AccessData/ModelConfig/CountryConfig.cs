@@ -1,4 +1,4 @@
-﻿using Daleb.Shared.Entities;
+﻿using Delab.Shared.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

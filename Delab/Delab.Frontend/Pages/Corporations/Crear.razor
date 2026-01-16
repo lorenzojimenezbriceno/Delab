@@ -1,0 +1,18 @@
+﻿@page "/corporations/create"
+
+@if (Corporation is null)
+{
+    <Loading />
+}
+else
+{
+    ﻿<MudDialog MaxWidth="MaxWidth.large" FullWidth="true">
+        <DialogContent>
+            <Form @ref=Form
+                  IsEditControl="false"
+                  Corporation="Corporation"
+                  OnSubmit="Create"
+                  ReturnAction="Return" />
+        </DialogContent>
+    </MudDialog>
+}

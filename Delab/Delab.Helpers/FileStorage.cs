@@ -4,7 +4,7 @@ using Delab.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 
-namespace Vent.Helpers;
+namespace Delab.Helpers;
 
 public class FileStorage : IFileStorage
 {

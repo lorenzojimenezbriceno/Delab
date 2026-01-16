@@ -1,7 +1,6 @@
-﻿using Delab.Shared.Entities;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace Daleb.Shared.Entities;
+namespace Delab.Shared.Entities;
 
 public class Country
 {

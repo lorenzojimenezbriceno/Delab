@@ -1,5 +1,5 @@
 using CurrieTechnologies.Razor.SweetAlert2;
-using Daleb.Shared.Entities;
+using Delab.Shared.Entities;
 using Delab.Frontend.Repositories;
 using Microsoft.AspNetCore.Components;
 

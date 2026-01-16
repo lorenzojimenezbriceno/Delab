@@ -3,7 +3,7 @@ using Delab.Frontend.Repositories;
 using Delab.Shared.Entities;
 using Microsoft.AspNetCore.Components;
 
-namespace Delab.Frontend.Pages.SoftPlanPage;
+namespace Delab.Frontend.Pages.SoftPlans;
 
 public partial class Edit
 {

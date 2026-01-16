@@ -1,4 +1,5 @@
 using Delab.AccessData.Data;
+using Delab.Helpers;
 using Delab.Shared.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -8,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Text.Json.Serialization;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -115,6 +117,12 @@ builder.Services
     //.AddScoped
     //.AddSingleton
     .AddTransient<SeedDB>();
+
+/*
+ * Instalar servicio para salvar archivos en Azure Blob Storage
+ */
+
+builder.Services.AddScoped<IFileStorage, FileStorage>();
 
 /*
  * Agregar CORS

@@ -28,10 +28,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Delab.AccessData\Delab.AccessData.csproj" />
+    <ProjectReference Include="..\Delab.Helpers\Delab.Helpers.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\Images\" />
+    <Folder Include="wwwroot\Images\ImgCorporation\" />
   </ItemGroup>
 
 </Project>

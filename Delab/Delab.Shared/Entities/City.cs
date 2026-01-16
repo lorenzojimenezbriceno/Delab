@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Daleb.Shared.Entities;
+namespace Delab.Shared.Entities;
 
 public class City
 {

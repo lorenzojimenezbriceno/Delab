@@ -1,5 +1,4 @@
-﻿using Daleb.Shared.Entities;
-using Delab.Shared.Entities;
+﻿using Delab.Shared.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;

@@ -1,5 +1,5 @@
 using CurrieTechnologies.Razor.SweetAlert2;
-using Daleb.Shared.Entities;
+using Delab.Shared.Entities;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Routing;

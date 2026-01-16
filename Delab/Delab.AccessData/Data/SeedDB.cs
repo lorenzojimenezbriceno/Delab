@@ -1,6 +1,4 @@
-﻿using Daleb.Shared.Entities;
-using Delab.Shared.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using Delab.Shared.Entities;
 
 namespace Delab.AccessData.Data;
 

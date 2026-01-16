@@ -1,7 +1,7 @@
 using CurrieTechnologies.Razor.SweetAlert2;
 using Microsoft.AspNetCore.Components;
 using Delab.Frontend.Repositories;
-using Daleb.Shared.Entities;
+using Delab.Shared.Entities;
 
 namespace Delab.Frontend.Pages.Cities;
 

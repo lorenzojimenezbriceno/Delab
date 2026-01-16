@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Delab.Frontend.Pages.SoftPlanPage;
+namespace Delab.Frontend.Pages.SoftPlans;
 
 public partial class Form
 {

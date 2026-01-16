@@ -1,4 +1,4 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿﻿﻿<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">Delab.Frontend</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
@@ -6,6 +6,19 @@
         </button>
     </div>
 </div>
+
+<MudNavMenu Color="Color.Primary">
+    <MudNavLink Href="/" Icon="@Icons.Material.Rounded.Home" IconColor="Color.Surface">Inicio</MudNavLink>
+    <MudDivider />
+    <MudNavGroup Title="Control Sistema" Icon="@Icons.Material.Filled.Settings" IconColor="Color.Surface" Expanded="false">
+        <MudNavLink Href="/softplans" Icon="@Icons.Material.Filled.Checklist" IconColor="Color.Info">Planes</MudNavLink>
+        <MudNavLink Href="/corporations" Icon="@Icons.Material.Filled.People" IconColor="Color.Info">Corporacion</MudNavLink>
+        <MudNavLink Href="/managers" Icon="@Icons.Material.Filled.Security" IconColor="Color.Info">Manager</MudNavLink>
+    </MudNavGroup>
+    <MudDivider />
+</MudNavMenu>
+
+<MudNavLink Href="/about" Icon="@Icons.Material.Filled.Info">Nosotros</MudNavLink>
 
 <div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
     <nav class="nav flex-column">

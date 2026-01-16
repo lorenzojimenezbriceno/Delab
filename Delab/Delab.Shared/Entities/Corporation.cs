@@ -1,5 +1,4 @@
-﻿using Daleb.Shared.Entities;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Delab.Shared.Entities;

@@ -1,108 +1,191 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Delab.AccessData.Data;
+using Delab.Backend.Helpers;
+using Delab.Helpers;
+using Delab.Shared.Entities;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Delab.AccessData.Data;
-using Delab.Shared.Entities;
 
-namespace Delab.Backend.Controllers
+
+namespace Delab.Backend.Controllers.Entites;
+
+[Route("api/corporations")]
+[ApiController]
+public class CorporationsController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class CorporationsController : ControllerBase
+    private readonly DataContext _context;
+    private readonly IFileStorage _fileStorage;
+    private readonly string ImgRoute;
+
+    public CorporationsController(DataContext context, IFileStorage fileStorage)
     {
-        private readonly DataContext _context;
+        _context = context;
+        _fileStorage = fileStorage;
+        ImgRoute = "wwwroot\\Images\\ImgCorporation";
+    }
 
-        public CorporationsController(DataContext context)
+    [HttpGet("loadCombo")]
+    public async Task<ActionResult<IEnumerable<Corporation>>> GetCorporations()
+    {
+        var listResult = await _context.Corporations.Where(x => x.Active).ToListAsync();
+        return listResult;
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<Corporation>>> GetCorporations([FromQuery] PaginationDTO pagination)
+    {
+        var queryable = _context.Corporations.Include(x => x.SoftPlan).AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(pagination.Filter))
         {
-            _context = context;
+            queryable = queryable.Where(x => x.Name!.ToLower().Contains(pagination.Filter.ToLower()));
         }
 
-        // GET: api/Corporations
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Corporation>>> GetCorporations()
-        {
-            return await _context.Corporations.ToListAsync();
-        }
+        await HttpContext.InsertParameterPagination(queryable, pagination.RecordsNumber);
+        return await queryable.OrderBy(x => x.Name).Paginate(pagination).ToListAsync();
+    }
 
-        // GET: api/Corporations/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Corporation>> GetCorporation(int id)
+    // GET: api/Corporations/5
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Corporation>> GetCorporation(int id)
+    {
+        try
         {
-            var corporation = await _context.Corporations.FindAsync(id);
+            var modelo = await _context.Corporations
+            .FindAsync(id);
 
-            if (corporation == null)
+            if (modelo == null)
             {
                 return NotFound();
             }
 
-            return corporation;
+            return modelo;
         }
-
-        // PUT: api/Corporations/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCorporation(int id, Corporation corporation)
+        catch (DbUpdateException dbUpdateException)
         {
-            if (id != corporation.CorporationId)
-            {
-                return BadRequest();
-            }
+            return BadRequest(dbUpdateException.InnerException!.Message);
+        }
+        catch (Exception exception)
+        {
+            return BadRequest(exception.Message);
+        }
+    }
 
-            _context.Entry(corporation).State = EntityState.Modified;
-
-            try
+    // PUT: api/Corporations/5
+    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [HttpPut()]
+    public async Task<IActionResult> PutCorporation(Corporation modelo)
+    {
+        try
+        {
+            if (!string.IsNullOrEmpty(modelo.ImgBase64))
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CorporationExists(id))
+                string guid;
+                if (modelo.ImagenId == null)
                 {
-                    return NotFound();
+                    guid = Guid.NewGuid().ToString() + ".jpg";
                 }
                 else
                 {
-                    throw;
+                    guid = modelo.ImagenId;
                 }
+                var imageId = Convert.FromBase64String(modelo.ImgBase64);
+                modelo.ImagenId = await _fileStorage.UploadImage(imageId, ImgRoute, guid);
             }
-
-            return NoContent();
-        }
-
-        // POST: api/Corporations
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Corporation>> PostCorporation(Corporation corporation)
-        {
-            _context.Corporations.Add(corporation);
+            _context.Corporations.Update(modelo);
             await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetCorporation", new { id = corporation.CorporationId }, corporation);
+            return Ok();
         }
-
-        // DELETE: api/Corporations/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCorporation(int id)
+        catch (DbUpdateException dbUpdateException)
         {
-            var corporation = await _context.Corporations.FindAsync(id);
-            if (corporation == null)
+            if (dbUpdateException.InnerException!.Message.Contains("duplicate"))
+            {
+                return BadRequest("Ya existe un Registro con el mismo nombre.");
+            }
+            else
+            {
+                return BadRequest(dbUpdateException.InnerException.Message);
+            }
+        }
+        catch (Exception exception)
+        {
+            return BadRequest(exception.Message);
+        }
+    }
+
+    // POST: api/Corporations
+    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [HttpPost]
+    public async Task<ActionResult<Corporation>> PostCorporation(Corporation modelo)
+    {
+        try
+        {
+            if (modelo.ImgBase64 is not null)
+            {
+                string guid = Guid.NewGuid().ToString() + ".jpg";
+                var imageId = Convert.FromBase64String(modelo.ImgBase64);
+                modelo.ImagenId = await _fileStorage.UploadImage(imageId, ImgRoute, guid);
+            }
+            _context.Corporations.Add(modelo);
+            await _context.SaveChangesAsync();
+            return CreatedAtAction("GetCorporation", new { id = modelo.CorporationId }, modelo);
+        }
+        catch (DbUpdateException dbUpdateException)
+        {
+            if (dbUpdateException.InnerException!.Message.Contains("duplicate"))
+            {
+                return BadRequest("Ya existe un Registro con el mismo nombre.");
+            }
+            else
+            {
+                return BadRequest(dbUpdateException.InnerException.Message);
+            }
+        }
+        catch (Exception exception)
+        {
+            return BadRequest(exception.Message);
+        }
+    }
+
+    // DELETE: api/Corporations/5
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteCorporation(int id)
+    {
+        try
+        {
+            var DataRemove = await _context.Corporations.FindAsync(id);
+            if (DataRemove == null)
             {
                 return NotFound();
             }
-
-            _context.Corporations.Remove(corporation);
+            _context.Corporations.Remove(DataRemove);
             await _context.SaveChangesAsync();
 
+            if (DataRemove.ImagenId is not null)
+            {
+                var response = _fileStorage.DeleteImage(ImgRoute, DataRemove.ImagenId);
+                if (!response)
+                {
+                    return BadRequest("Se Elimino el Registro pero sin la Imagen");
+                }
+            }
             return NoContent();
         }
-
-        private bool CorporationExists(int id)
+        catch (DbUpdateException dbUpdateException)
         {
-            return _context.Corporations.Any(e => e.CorporationId == id);
+            if (dbUpdateException.InnerException!.Message.Contains("REFERENCE"))
+            {
+                return BadRequest("Existen Registros Relacionados y no se puede Eliminar");
+            }
+            else
+            {
+                return BadRequest(dbUpdateException.InnerException.Message);
+            }
+        }
+        catch (Exception exception)
+        {
+            return BadRequest(exception.Message);
         }
     }
 }
