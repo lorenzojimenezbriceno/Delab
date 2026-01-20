@@ -1,26 +1,80 @@
-﻿using Delab.Shared.Entities;
+﻿using Delab.AccessData.Data;
+using Delab.Shared.Entities;
+using Delab.Shared.Enum;
 
-namespace Delab.AccessData.Data;
+namespace Delab.Helpers;
 
 public class SeedDB
 {
-    private readonly DataContext context;
+    private readonly DataContext _context;
+    private readonly IUserHelper _userHelper;
 
-    public SeedDB(DataContext context)
+    public SeedDB(DataContext context, IUserHelper userHelper)
     {
-        this.context = context;
+        _context = context;
+        _userHelper = userHelper;
     }
 
     public async Task SeedAsync()
     {
         // Asegurarse que la base de datos esté creada
-        await context.Database.EnsureCreatedAsync();
+        await _context.Database.EnsureCreatedAsync();
 
         // Inserta los países, estados y ciudades
         await CheckCountriesAsync();
 
+        // Inserta los roles (sin esos no se pueden insertar los usuarios)
+        await CheckRolesAsync();
+
         // Inserta los planes
         await CheckSoftPlan();
+
+        // Inserta el administrador
+        await CheckUserAsync("Nexxtplanet",  "SPI",  "soporte@nexxtplanet.net",  "+1 786 503", UserType.Admin);
+        await CheckUserAsync("Nexxtplanet1", "SPI1", "soporte1@nexxtplanet.net", "+1 786 504", UserType.User);
+        await CheckUserAsync("Nexxtplanet2", "SPI2", "soporte2@nexxtplanet.net", "+1 786 505", UserType.UserAux);
+        await CheckUserAsync("Nexxtplanet3", "SPI3", "soporte3@nexxtplanet.net", "+1 786 506", UserType.Cachier);
+        await CheckUserAsync("Nexxtplanet4", "SPI4", "soporte4@nexxtplanet.net", "+1 786 507", UserType.Storage);
+    }
+
+    private async Task CheckRolesAsync()
+    {
+        await _userHelper.CheckRoleAsync(UserType.Admin.ToString());
+        await _userHelper.CheckRoleAsync(UserType.User.ToString());
+        await _userHelper.CheckRoleAsync(UserType.UserAux.ToString());
+        await _userHelper.CheckRoleAsync(UserType.Cachier.ToString());
+        await _userHelper.CheckRoleAsync(UserType.Storage.ToString());
+    }
+
+    private async Task<User> CheckUserAsync(string firstName, string lastName, string email,
+                string phone, UserType userType)
+    {
+        User user = await _userHelper.GetUserAsync(email);
+        if (user == null)
+        {
+            user = new()
+            {
+                FirstName = firstName,
+                LastName = lastName,
+                FullName = $"{firstName} {lastName}",
+                Email = email,
+                UserName = email,
+                PhoneNumber = phone,
+                JobPosition = "Administrador",
+                UserFrom = "SeedDb",
+                UserRoleDetails = new List<UserRoleDetails> { new UserRoleDetails { UserType = userType } },
+                Active = true,
+            };
+
+            await _userHelper.AddUserAsync(user, "123456");
+            await _userHelper.AddUserToRoleAsync(user, userType.ToString());
+
+            //Para Confirmar automaticamente el Usuario y activar la cuenta
+            string token = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+            await _userHelper.ConfirmEmailAsync(user, token);
+            await _userHelper.AddUserClaims(userType, email);
+        }
+        return user;
     }
 
     /*
@@ -29,9 +83,9 @@ public class SeedDB
 
     private async Task CheckSoftPlan()
     {
-        if (!context.SoftPlans.Any())
+        if (!_context.SoftPlans.Any())
         {
-            context.SoftPlans.Add(new SoftPlan
+            _context.SoftPlans.Add(new SoftPlan
             {
                 Name = "Plan 1 Mes",
                 Price = 50,
@@ -39,7 +93,7 @@ public class SeedDB
                 ClinicsCount = 2,
                 Active = true
             });
-            context.SoftPlans.Add(new SoftPlan
+            _context.SoftPlans.Add(new SoftPlan
             {
                 Name = "Plan 6 Mes",
                 Price = 300,
@@ -47,7 +101,7 @@ public class SeedDB
                 ClinicsCount = 10,
                 Active = true
             });
-            context.SoftPlans.Add(new SoftPlan
+            _context.SoftPlans.Add(new SoftPlan
             {
                 Name = "Plan 12 Mes",
                 Price = 600,
@@ -55,7 +109,7 @@ public class SeedDB
                 ClinicsCount = 100,
                 Active = true
             });
-            await context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
     }
 
@@ -65,9 +119,9 @@ public class SeedDB
 
     private async Task CheckCountriesAsync()
     {
-       if (!context.Countries.Any())
+       if (!_context.Countries.Any())
        {
-            context.Countries.Add(new Country()
+            _context.Countries.Add(new Country()
             {
                 Name = "Colombia",
                 CodPhone = "+57",
@@ -131,7 +185,7 @@ public class SeedDB
                 }
             });
 
-            context.Countries.Add(new Country()
+            _context.Countries.Add(new Country()
             {
                 Name = "Estados Unidos",
                 CodPhone = "+1",
@@ -217,7 +271,7 @@ public class SeedDB
                 }
             });
 
-            context.Countries.Add(new Country
+            _context.Countries.Add(new Country
             {
                 Name = "Mexico",
                 CodPhone = "+57",
@@ -250,7 +304,7 @@ public class SeedDB
                 }
             });
 
-            await context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
        }
     }
 }

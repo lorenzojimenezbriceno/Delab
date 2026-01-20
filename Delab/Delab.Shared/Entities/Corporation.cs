@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Delab.Shared.Entities;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Delab.Shared.Entities;
@@ -60,20 +61,19 @@ public class Corporation
     //Propiedad Virtual
     [Display(Name = "Logo")]
     public string ImageFullPath => ImagenId == string.Empty || ImagenId == null
-        ? $"https://localhost:7148/Images/NoImage.png"
-        : $"https://localhost:7148/Images/ImgCorporation/{ImagenId}";
+        ? $"https://localhost:7165/Images/NoImage.png"
+        : $"https://localhost:7165/Images/ImgCorporation/{ImagenId}";
 
     [NotMapped]
     public string? ImgBase64 { get; set; }
 
     // Relaciones entre entidades
+    public Country? Country { get; set; }
 
     public SoftPlan? SoftPlan { get; set; }
 
-    public Country? Country { get; set; }
-
     public ICollection<Manager>? Managers { get; set; }
-    
+
     public ICollection<User>? Usuarios { get; set; }
 
     public ICollection<UserRoleDetails>? UserRoleDetails { get; set; }

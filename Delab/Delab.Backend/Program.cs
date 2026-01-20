@@ -113,16 +113,16 @@ builder.Services
  * Instalar servicio para sembrar datos en la base de datos
  */
 
-builder.Services
-    //.AddScoped
-    //.AddSingleton
-    .AddTransient<SeedDB>();
+builder.Services.AddTransient<SeedDB>();
 
 /*
- * Instalar servicio para salvar archivos en Azure Blob Storage
+ * Instalar servicios utilitarios
  */
 
 builder.Services.AddScoped<IFileStorage, FileStorage>();
+builder.Services.AddScoped<IUserHelper, UserHelper>();
+// builder.Services.AddScoped<IEmailHelper, EmailHelper>();
+builder.Services.AddScoped<IUtilityTools, UtilityTools>();
 
 /*
  * Agregar CORS

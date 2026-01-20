@@ -3,8 +3,8 @@
 public enum UserType
 {
     Admin = 1,
-    Usuario = 2,
-    Auxiliar = 3,
-    Cajero = 4,
-    Tecnico = 5
+    User = 2,
+    UserAux = 3,
+    Cachier = 4,
+    Storage = 5
 }

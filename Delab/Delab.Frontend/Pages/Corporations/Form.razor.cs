@@ -155,8 +155,8 @@ public partial class Form
 
         var result = await _sweetAlert.FireAsync(new SweetAlertOptions
         {
-            Title = "Confirmaci�n",
-            Text = "�Deseas abandonar la p�gina y perder los cambios?",
+            Title = "Confirmación",
+            Text = "¿Deseas abandonar la página y perder los cambios?",
             Icon = SweetAlertIcon.Warning,
             ShowCancelButton = true
         });

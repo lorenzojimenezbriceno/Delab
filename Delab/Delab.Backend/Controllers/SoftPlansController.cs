@@ -1,12 +1,10 @@
 ﻿using Delab.AccessData.Data;
 using Delab.Backend.Helpers;
 using Delab.Shared.Entities;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Delab.Backend.Controllers;
+namespace Delab.Backend.Controllers.Entites;
 
 [Route("api/softplans")]
 //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
@@ -21,46 +19,53 @@ public class SoftPlansController : ControllerBase
     }
 
     [HttpGet("loadCombo")]
-    public async Task<ActionResult<List<SoftPlan>>> GetSoftplanCombo()
+    public async Task<ActionResult<IEnumerable<SoftPlan>>> GetPeriodicidads()
     {
-        var newList = await _context.SoftPlans.Where(x => x.Active).OrderBy(x => x.Name).ToListAsync();
-        return newList;
+        var listResult = await _context.SoftPlans.OrderBy(x => x.Name).ToListAsync();
+        return listResult;
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<SoftPlan>>> GetAsync([FromQuery] PaginationDTO pagination)
+    public async Task<ActionResult<IEnumerable<SoftPlan>>> GetSoftPlans([FromQuery] PaginationDTO pagination)
     {
         var queryable = _context.SoftPlans.AsQueryable();
+
         if (!string.IsNullOrWhiteSpace(pagination.Filter))
         {
             queryable = queryable.Where(x => x.Name!.ToLower().Contains(pagination.Filter.ToLower()));
         }
 
-        // Inserta los dos encabezados en el response
         await HttpContext.InsertParameterPagination(queryable, pagination.RecordsNumber);
         return await queryable.OrderBy(x => x.Name).Paginate(pagination).ToListAsync();
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<SoftPlan>> GetOneAsync(int id)
+    public async Task<ActionResult<SoftPlan>> GetSoftPlan(int id)
     {
         try
         {
-            var modelo = await _context.SoftPlans.FindAsync(id);
+            var modelo = await _context.SoftPlans
+            .FindAsync(id);
+
             if (modelo == null)
             {
-                return BadRequest("Problemas para conseguir el registro");
+                return NotFound();
             }
+
             return Ok(modelo);
         }
-        catch (Exception ex)
+        catch (DbUpdateException dbUpdateException)
         {
-            return BadRequest(ex.Message);
+            return BadRequest(dbUpdateException.InnerException!.Message);
+        }
+        catch (Exception exception)
+        {
+            return BadRequest(exception.Message);
         }
     }
 
     [HttpPut]
-    public async Task<IActionResult> PutAsync(SoftPlan modelo)
+    public async Task<IActionResult> PutSoftPlan(SoftPlan modelo)
     {
         try
         {
@@ -68,77 +73,78 @@ public class SoftPlansController : ControllerBase
             await _context.SaveChangesAsync();
             return Ok();
         }
-        catch (DbUpdateException dbEx)
+        catch (DbUpdateException dbUpdateException)
         {
-            if (dbEx.InnerException!.Message.Contains("duplicate"))
+            if (dbUpdateException.InnerException!.Message.Contains("duplicate"))
             {
-                return BadRequest("Ya Existe un Registro con el mismo nombre.");
+                return BadRequest("Ya existe un Registro con el mismo nombre.");
             }
             else
             {
-                return BadRequest(dbEx.InnerException.Message);
+                return BadRequest(dbUpdateException.InnerException.Message);
             }
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            return BadRequest(ex.Message);
+            return BadRequest(exception.Message);
         }
     }
 
     [HttpPost]
-    public async Task<ActionResult<SoftPlan>> PostAsync(SoftPlan modelo)
+    public async Task<ActionResult<SoftPlan>> PostSoftPlan(SoftPlan modelo)
     {
         try
         {
             _context.SoftPlans.Add(modelo);
             await _context.SaveChangesAsync();
+
             return Ok(modelo);
         }
-        catch (DbUpdateException dbEx)
+        catch (DbUpdateException dbUpdateException)
         {
-            if (dbEx.InnerException!.Message.Contains("duplicate"))
+            if (dbUpdateException.InnerException!.Message.Contains("duplicate"))
             {
-                return BadRequest("Ya Existe un Registro con el mismo nombre.");
+                return BadRequest("Ya existe un Registro con el mismo nombre.");
             }
             else
             {
-                return BadRequest(dbEx.InnerException.Message);
+                return BadRequest(dbUpdateException.InnerException.Message);
             }
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            return BadRequest(ex.Message);
+            return BadRequest(exception.Message);
         }
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteAAsync(int id)
+    public async Task<IActionResult> DeleteSoftPlan(int id)
     {
         try
         {
             var DataRemove = await _context.SoftPlans.FindAsync(id);
             if (DataRemove == null)
             {
-                return BadRequest("Problemas para conseguir el registro");
+                return NotFound();
             }
             _context.SoftPlans.Remove(DataRemove);
             await _context.SaveChangesAsync();
-            return Ok();
+            return NoContent();
         }
-        catch (DbUpdateException dbEx)
+        catch (DbUpdateException dbUpdateException)
         {
-            if (dbEx.InnerException!.Message.Contains("REFERENCE"))
+            if (dbUpdateException.InnerException!.Message.Contains("REFERENCE"))
             {
-                return BadRequest("No puede Eliminar el registro porque tiene datos Relacionados");
+                return BadRequest("Existen Registros Relacionados y no se puede Eliminar");
             }
             else
             {
-                return BadRequest(dbEx.InnerException.Message);
+                return BadRequest(dbUpdateException.InnerException.Message);
             }
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            return BadRequest(ex.Message);
+            return BadRequest(exception.Message);
         }
     }
 }
