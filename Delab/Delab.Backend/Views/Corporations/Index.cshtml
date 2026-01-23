@@ -73,10 +73,10 @@
                 @Html.DisplayFor(modelItem => item.Active)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.SoftPlan.Name)
+                @Html.DisplayFor(modelItem => item.SoftPlan!.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Country.Name)
+                @Html.DisplayFor(modelItem => item.Country!.Name)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.CorporationId">Edit</a> |

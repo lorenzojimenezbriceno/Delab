@@ -33,6 +33,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\Images\ImgCorporation\" />
+    <Folder Include="wwwroot\Images\ImgManager\" />
   </ItemGroup>
 
 </Project>

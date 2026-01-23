@@ -1,6 +1,8 @@
 using CurrieTechnologies.Razor.SweetAlert2;
 using Delab.Frontend;
+using Delab.Frontend.AuthenticationProviders;
 using Delab.Frontend.Repositories;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
@@ -26,6 +28,21 @@ builder.Services.AddScoped(sp => new HttpClient
  */
 
 builder.Services.AddScoped<IRepository, Repository>();
+
+/*
+ * Inyecta el servicio se seguridad
+ */
+
+builder.Services.AddAuthorizationCore();
+
+/*
+ * Agrega el authenticator provider
+ */
+
+//Authentication Provider
+builder.Services.AddScoped<AuthenticationProviderJWT>();
+builder.Services.AddScoped<AuthenticationStateProvider, AuthenticationProviderJWT>(x => x.GetRequiredService<AuthenticationProviderJWT>());
+builder.Services.AddScoped<ILoginService, AuthenticationProviderJWT>(x => x.GetRequiredService<AuthenticationProviderJWT>());
 
 /*
  * Manejar el SweetAlert2 de mensajes por toda la aplicacion

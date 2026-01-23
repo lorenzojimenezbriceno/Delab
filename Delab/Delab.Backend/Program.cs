@@ -1,6 +1,8 @@
 using Delab.AccessData.Data;
 using Delab.Helpers;
+using Delab.Helpers.Data;
 using Delab.Shared.Entities;
+using Delab.Shared.ResponsesSec;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -69,8 +71,8 @@ builder.Services.AddDbContext<DataContext>(x =>
     x.UseSqlServer("name=DefaultConnection", options => options.MigrationsAssembly("Delab.Backend")));
 
 /* 
- * Authenticator token provider
- * Para realizar logueo de los usuarios
+ * Authenticator token provider para realizar el logueo de los usuarios
+ * Y las reglas de seguridad
  */
 
 builder.Services.AddIdentity<User, IdentityRole>(cfg =>
@@ -116,12 +118,19 @@ builder.Services
 builder.Services.AddTransient<SeedDB>();
 
 /*
+ * Instalar servicio para obtener las llaves de configuracion del email
+ * para que puedan ser utilizadas en cualquier parte del proyecto
+ */
+
+builder.Services.Configure<SendGridSettings>(builder.Configuration.GetSection("SendGrid"));
+
+/*
  * Instalar servicios utilitarios
  */
 
 builder.Services.AddScoped<IFileStorage, FileStorage>();
 builder.Services.AddScoped<IUserHelper, UserHelper>();
-// builder.Services.AddScoped<IEmailHelper, EmailHelper>();
+builder.Services.AddScoped<IEmailHelper, EmailHelper>();
 builder.Services.AddScoped<IUtilityTools, UtilityTools>();
 
 /*

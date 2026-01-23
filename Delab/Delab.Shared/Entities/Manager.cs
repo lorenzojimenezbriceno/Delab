@@ -38,7 +38,8 @@ public class Manager
     [Display(Name = "Direccion")]
     public string Address { get; set; } = null!;
 
-    //Correo y Coirporation
+    // Correo y Corporation
+    
     [MaxLength(256, ErrorMessage = "El campo no puede ser mayor a {0} de largo")]
     [DataType(DataType.EmailAddress)]
     [Display(Name = "Email")]
@@ -62,11 +63,11 @@ public class Manager
     [Display(Name = "Activo")]
     public bool Active { get; set; }
 
-    //TODO: Cambio de ruta para Imagenes
-    //Propiedad viertual de Acceso a imagen
+    // Propiedad virtual de Acceso a imagen
+    
     public string ImageFullPath => Photo == string.Empty || Photo == null
-        ? $"https://localhost:7204/Images/NoImage.png"
-        : $"https://localhost:7204/Images/ImgManager/{Photo}";
+        ? $"https://localhost:7148/Images/NoImage.png"
+        : $"https://localhost:7148/Images/ImgManager/{Photo}";
 
     [NotMapped]
     public string? ImgBase64 { get; set; }

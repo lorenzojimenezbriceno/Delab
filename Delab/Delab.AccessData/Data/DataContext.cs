@@ -1,4 +1,5 @@
 ﻿using Delab.Shared.Entities;
+using Delab.Shared.EntitiesSoftSec;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
@@ -18,7 +19,6 @@ public class DataContext : IdentityDbContext<User>
     public DbSet<Country> Countries => Set<Country>();
     public DbSet<State> States => Set<State>();
     public DbSet<City> Cities => Set<City>();
-
     public DbSet<SoftPlan> SoftPlans => Set<SoftPlan>();
     public DbSet<Corporation> Corporations => Set<Corporation>();
     public DbSet<Manager> Managers => Set<Manager>();
@@ -27,12 +27,12 @@ public class DataContext : IdentityDbContext<User>
      * Manejo de UserRoles por Usuario
      */
 
-    // public DbSet<Usuario> Usuarios => Set<Usuario>();
-    // public DbSet<UsuarioRole> UsuarioRoles => Set<UsuarioRole>();
-    // public DbSet<UserRoleDetails> UserRoleDetails => Set<UserRoleDetails>();
+    public DbSet<Usuario> Usuarios => Set<Usuario>();
+    public DbSet<UsuarioRole> UsuarioRoles => Set<UsuarioRole>();
+    public DbSet<UserRoleDetails> UserRoleDetails => Set<UserRoleDetails>();
 
     /*
-     * Metodo que se ejecuta inicialmente para el modelo de la base de dato
+     * Metodo que se ejecuta inicialmente para el modelo de la base de datos
      */
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
