@@ -113,6 +113,13 @@ builder.Services
 
 /*
  * Instalar servicio para sembrar datos en la base de datos
+ * 
+ * Existe otra forma para hacer el Data Seeding:
+ * 
+ *      Se utiliza .UseSeeding y .UseAsyncSeeding (https://www.youtube.com/watch?v=A23GZ5XQy18, imagen UseSeeding.png)
+ *      Este metodo se ejecuta cuando se usa el comando update-database del EF
+ *      Y no requiere de montar un servicio a la hora de ejecutar el backend
+ * 
  */
 
 builder.Services.AddTransient<SeedDB>();
@@ -207,6 +214,8 @@ app.Run();
 /*
  * Método para cargar los datos de prueba a la base de datos si está vacía
  * Es una forma de ejecutar un servicio en tiempo de ejecución
+ * 
+ * Se puede hacer de otra forma. Ver UseSeeding1.png
  */
 
 void SeedData(WebApplication app)
